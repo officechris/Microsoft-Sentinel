@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspace": {
+            "type": "String"
+        }
+    },
+    "resources": [
+        {
+            "id": "[concat(resourceId('Microsoft.OperationalInsights/workspaces/providers', parameters('workspace'), 'Microsoft.SecurityInsights'),'/alertRules/07e1195d-d423-46f3-afe0-5d49c609733f')]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/07e1195d-d423-46f3-afe0-5d49c609733f')]",
+            "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+            "kind": "Scheduled",
+            "apiVersion": "2021-09-01-preview",
+            "properties": {
+                "displayName": "MFA Registration Added",
+                "description": "User has added a new MFA Registration Detail",
+                "severity": "Informational",
+                "enabled": true,
+                "query": "AuditLogs \r\n| extend u=parse_json(InitiatedBy)\r\n| extend upn=u.user.userPrincipalName\r\n| extend UserId=tostring(u.user.id)\r\n| extend TimeRegistered = TimeGenerated\r\n| join kind=inner\r\n(SigninLogs\r\n| extend UserId = tostring(UserId)\r\n| extend l=parse_json(LocationDetails)\r\n| extend city=l.city\r\n| extend state=l.state\r\n| extend country=l.countryOrRegion\r\n| where AppDisplayName == \"My Access\") on UserId \r\n| where Category == \"UserManagement\" and OperationName == \"User registered security info\" \r\n| project TimeGenerated, upn, UserId, IPAddress, city, state, country, OperationName, ResultDescription",
+                "queryFrequency": "P1D",
+                "queryPeriod": "P1D",
+                "triggerOperator": "GreaterThan",
+                "triggerThreshold": 0,
+                "suppressionDuration": "PT5H",
+                "suppressionEnabled": false,
+                "tactics": [
+                    "InitialAccess"
+                ],
+                "alertRuleTemplateName": null,
+                "incidentConfiguration": {
+                    "createIncident": true,
+                    "groupingConfiguration": {
+                        "enabled": true,
+                        "reopenClosedIncident": false,
+                        "lookbackDuration": "PT5H",
+                        "matchingMethod": "AllEntities",
+                        "groupByEntities": [],
+                        "groupByAlertDetails": [],
+                        "groupByCustomDetails": []
+                    }
+                },
+                "eventGroupingSettings": {
+                    "aggregationKind": "AlertPerResult"
+                },
+                "alertDetailsOverride": null,
+                "customDetails": null,
+                "entityMappings": [
+                    {
+                        "entityType": "Account",
+                        "fieldMappings": [
+                            {
+                                "identifier": "AadUserId",
+                                "columnName": "UserId"
+                            }
+                        ]
+                    },
+                    {
+                        "entityType": "IP",
+                        "fieldMappings": [
+                            {
+                                "identifier": "Address",
+                                "columnName": "IPAddress"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}
