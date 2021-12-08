@@ -1,0 +1,95 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspace": {
+            "type": "String"
+        }
+    },
+    "resources": [
+        {
+            "id": "[concat(resourceId('Microsoft.OperationalInsights/workspaces/providers', parameters('workspace'), 'Microsoft.SecurityInsights'),'/alertRules/3a62080f-4048-4945-92ce-f4ff11f4c67f')]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/3a62080f-4048-4945-92ce-f4ff11f4c67f')]",
+            "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+            "kind": "Scheduled",
+            "apiVersion": "2021-09-01-preview",
+            "properties": {
+                "displayName": "AWS Account Created and Deleted within 24 Hours",
+                "description": "AWS Account was created and deleted within a 24 hour period, an attacker may use this technique to cover their tracks.",
+                "severity": "Medium",
+                "enabled": true,
+                "query": "AWSCloudTrail\r\n| where EventName == \"CreateUser\"\r\n| extend targetUserName=tostring(parse_json(RequestParameters).userName)\r\n| extend actorUPN = split(UserIdentityPrincipalid,\":\").[1]\r\n| extend actorUserName = split(actorUPN,\"@\").[0]\r\n| extend actorUPNSuffix = split(actorUPN,\"@\").[1]\r\n| join kind=inner (AWSCloudTrail\r\n    | where EventName == \"DeleteUser\"\r\n    | extend targetUserName=tostring(parse_json(RequestParameters).userName)\r\n    | extend actorUPN = split(UserIdentityPrincipalid,\":\").[1]\r\n    | extend actorUserName = split(actorUPN,\"@\").[0]\r\n| extend actorUPNSuffix = split(actorUPN,\"@\").[1])\r\n    on targetUserName\r\n| extend timedelta = TimeGenerated1 - TimeGenerated\r\n| project-reorder TimeGenerated, TimeGenerated1, timedelta\r\n| where timedelta < timespan(24h) and timedelta > timespan(0h)",
+                "queryFrequency": "PT1H",
+                "queryPeriod": "PT1H",
+                "triggerOperator": "GreaterThan",
+                "triggerThreshold": 0,
+                "suppressionDuration": "PT5H",
+                "suppressionEnabled": false,
+                "tactics": [
+                    "InitialAccess"
+                ],
+                "techniques": [],
+                "alertRuleTemplateName": null,
+                "incidentConfiguration": {
+                    "createIncident": true,
+                    "groupingConfiguration": {
+                        "enabled": false,
+                        "reopenClosedIncident": false,
+                        "lookbackDuration": "PT5H",
+                        "matchingMethod": "AllEntities",
+                        "groupByEntities": [],
+                        "groupByAlertDetails": [],
+                        "groupByCustomDetails": []
+                    }
+                },
+                "eventGroupingSettings": {
+                    "aggregationKind": "SingleAlert"
+                },
+                "alertDetailsOverride": null,
+                "customDetails": null,
+                "entityMappings": [
+                    {
+                        "entityType": "IP",
+                        "fieldMappings": [
+                            {
+                                "identifier": "Address",
+                                "columnName": "SourceIpAddress"
+                            }
+                        ]
+                    },
+                    {
+                        "entityType": "Account",
+                        "fieldMappings": [
+                            {
+                                "identifier": "Name",
+                                "columnName": "targetUserName"
+                            }
+                        ]
+                    },
+                    {
+                        "entityType": "Account",
+                        "fieldMappings": [
+                            {
+                                "identifier": "Name",
+                                "columnName": "actorUserName"
+                            },
+                            {
+                                "identifier": "UPNSuffix",
+                                "columnName": "actorUPNSuffix"
+                            }
+                        ]
+                    },
+                    {
+                        "entityType": "CloudApplication",
+                        "fieldMappings": [
+                            {
+                                "identifier": "Name",
+                                "columnName": "Type"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}
