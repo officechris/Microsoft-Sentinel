@@ -16,7 +16,7 @@
             "properties": {
                 "displayName": "AWS Account Created and Deleted within 24 Hours",
                 "description": "AWS Account was created and deleted within a 24 hour period, an attacker may use this technique to cover their tracks.",
-                "severity": "Medium",
+                "severity": "High",
                 "enabled": true,
                 "query": "AWSCloudTrail\r\n| where EventName == \"CreateUser\"\r\n| extend targetUserName=tostring(parse_json(RequestParameters).userName)\r\n| extend actorUPN = split(UserIdentityPrincipalid,\":\").[1]\r\n| extend actorUserName = split(actorUPN,\"@\").[0]\r\n| extend actorUPNSuffix = split(actorUPN,\"@\").[1]\r\n| join kind=inner (AWSCloudTrail\r\n    | where EventName == \"DeleteUser\"\r\n    | extend targetUserName=tostring(parse_json(RequestParameters).userName)\r\n    | extend actorUPN = split(UserIdentityPrincipalid,\":\").[1]\r\n    | extend actorUserName = split(actorUPN,\"@\").[0]\r\n| extend actorUPNSuffix = split(actorUPN,\"@\").[1])\r\n    on targetUserName\r\n| extend timedelta = TimeGenerated1 - TimeGenerated\r\n| project-reorder TimeGenerated, TimeGenerated1, timedelta\r\n| where timedelta < timespan(24h) and timedelta > timespan(0h)",
                 "queryFrequency": "PT1H",
