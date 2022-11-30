@@ -10,18 +10,18 @@
     {
       "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
       "apiVersion": "2020-08-01",
-      "name": "[concat(parameters('workspace'), '/MDE_T1036.004')]",
+      "name": "[concat(parameters('workspace'), '/MDE_T1061')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "eTag": "*",
-        "displayName": "Masqueraded task or service",
+        "displayName": "Suspicious System Network Configuration Discovery",
         "category": "Hunting Queries",
-        "query": "\nAlertInfo\n| where AttackTechniques contains \"T1036.004\"\n",
+        "query": "\nSecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where isnotnull(MitreTechnique)\n| where MitreTechnique == \"T1016\"",
         "version": 1,
         "tags": [
           {
             "name": "description",
-            "value": "This hunting query helps identify new, and potentially unapproved applications or bots being added to Teams."
+            "value": "Microsoft Defender for Endpoint Alert Generated for T1061 - Suspicious System Network Configuration Discovery"
           },
           {
             "name": "tactics",
