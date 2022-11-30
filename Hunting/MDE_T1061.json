@@ -25,15 +25,15 @@
           },
           {
             "name": "tactics",
-            "value": "Discovery"
+            "value": "Persistence"
           },
           {
             "name": "relevantTechniques",
-            "value": "T1016"
+            "value": ""
           },
 		  {
             "name": "techniques",
-            "value": "T1016"
+            "value": "T1547,T1547.001"
           }
         ]
       }
