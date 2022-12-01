@@ -21,7 +21,7 @@
         "tags": [
           {
             "name": "description",
-            "value": "Microsoft Defender for Endpoint Alert - Use of living-off-the-land binary to run malicious code - Attackers attempt to run malicious code undetected by loading the code in the context of common executables. Security researchers refer to this approach and a few other evasive techniques as living off the land” (LOL) and the common executables as LOL binaries or LOLBins”.  This alert indicates an anomalous attempt by a parent process to run one of these common executables using suspicious command-line parameters."
+            "value": "Microsoft Defender for Endpoint Alert - Use of living-off-the-land binary to run malicious code"
           },
           {
             "name": "tactics",
