@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Attempt_to_turn_off_Microsoft_Defender_Antivirus_protection_T1089_T1562_001')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Attempt to turn off Microsoft Defender Antivirus protection",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Attempt to turn off Microsoft Defender Antivirus protection\"\n| where MitreTechnique == \"T1089;T1562.001\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Attempt to turn off Microsoft Defender Antivirus protection - Mitre Techniques T1089,T1562.001"
+          },
+          {
+            "name": "tactics",
+            "value": "DefenseEvasion"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1089,T1562.001"
+          }
+        ]
+      }
+    }
+  ]
+}
