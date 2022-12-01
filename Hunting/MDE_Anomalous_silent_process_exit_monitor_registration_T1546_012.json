@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Anomalous_silent_process_exit_monitor_registration_T1546_012')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Anomalous silent process exit monitor registration",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Anomalous silent process exit monitor registration\"\n| where MitreTechnique == \"T1546.012\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Anomalous silent process exit monitor registration - Mitre Techniques T1546.012"
+          },
+          {
+            "name": "tactics",
+            "value": "Persistence"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1546.012"
+          }
+        ]
+      }
+    }
+  ]
+}
