@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Suspicious_Permission_Groups_Discovery_T1069_001_T1069_002_T1087_001')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Suspicious Permission Groups Discovery",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Suspicious Permission Groups Discovery\"\n| where MitreTechnique == \"T1069.001;T1069.002;T1087.001\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Suspicious Permission Groups Discovery - Mitre Techniques T1069.001,T1069.002,T1087.001"
+          },
+          {
+            "name": "tactics",
+            "value": "Discovery"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1069.001,T1069.002,T1087.001"
+          }
+        ]
+      }
+    }
+  ]
+}
