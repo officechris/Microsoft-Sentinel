@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_An_uncommon_file_was_created_and_added_to_a_Run_Key_T1547_001')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - An uncommon file was created and added to a Run Key",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"An uncommon file was created and added to a Run Key\"\n| where MitreTechnique == \"T1547.001\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - An uncommon file was created and added to a Run Key - Mitre Techniques T1547.001"
+          },
+          {
+            "name": "tactics",
+            "value": "Persistence"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1547.001"
+          }
+        ]
+      }
+    }
+  ]
+}
