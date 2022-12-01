@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Suspicious_behavior_by_cmd.exe_was_observed_T1059_003')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Suspicious behavior by cmd.exe was observed",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Suspicious behavior by cmd.exe was observed\"\n| where MitreTechnique == \"T1059.003\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Suspicious behavior by cmd.exe was observed - Mitre Techniques T1059.003"
+          },
+          {
+            "name": "tactics",
+            "value": "Execution"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1059.003"
+          }
+        ]
+      }
+    }
+  ]
+}
