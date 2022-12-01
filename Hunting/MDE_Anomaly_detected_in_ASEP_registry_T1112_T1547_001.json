@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Anomaly_detected_in_ASEP_registry_T1112_T1547_001')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Anomaly detected in ASEP registry",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Anomaly detected in ASEP registry\"\n| where MitreTechnique == \"T1112;T1547.001\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Anomaly detected in ASEP registry - Mitre Techniques T1112,T1547.001"
+          },
+          {
+            "name": "tactics",
+            "value": "Persistence"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1112,T1547.001"
+          }
+        ]
+      }
+    }
+  ]
+}
