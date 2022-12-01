@@ -10,7 +10,7 @@
     {
       "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
       "apiVersion": "2020-08-01",
-      "name": "[concat(parameters('workspace'), '/MDE_T1016')]",
+      "name": "[concat(parameters('workspace'), '/MDE_T1016_Suspicious_System_Network_Configuration_Discovery')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "eTag": "*",
