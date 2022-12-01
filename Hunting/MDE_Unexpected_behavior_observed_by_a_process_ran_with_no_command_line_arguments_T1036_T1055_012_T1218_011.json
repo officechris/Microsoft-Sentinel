@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Unexpected_behavior_observed_by_a_process_ran_with_no_command_line_arguments_T1036_T1055_012_T1218_011')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Unexpected behavior observed by a process ran with no command line arguments",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Unexpected behavior observed by a process ran with no command line arguments\"\n| where MitreTechnique == \"T1036;T1055.012;T1218.011\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Unexpected behavior observed by a process ran with no command line arguments - Mitre Techniques T1036,T1055.012,T1218.011"
+          },
+          {
+            "name": "tactics",
+            "value": "DefenseEvasion"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1036,T1055.012,T1218.011"
+          }
+        ]
+      }
+    }
+  ]
+}
