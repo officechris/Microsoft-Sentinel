@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Regsvr32.exe_launched_suspicious_commands_T1218_010')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Regsvr32.exe launched suspicious commands",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Regsvr32.exe launched suspicious commands\"\n| where MitreTechnique == \"T1218.010\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Regsvr32.exe launched suspicious commands - Mitre Techniques T1218.010"
+          },
+          {
+            "name": "tactics",
+            "value": "DefenseEvasion"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1218.010"
+          }
+        ]
+      }
+    }
+  ]
+}
