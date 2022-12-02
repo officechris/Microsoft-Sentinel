@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_PowerView_script_detected_T1016_T1018_T1021_001_T1033_T1059_001_T1069_T1082_T1087_002_T1484_T1555')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - PowerView script detected",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"PowerView script detected\"\n| where MitreTechnique == \"T1016;T1018;T1021.001;T1033;T1059.001;T1069;T1082;T1087.002;T1484;T1555\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - PowerView script detected - Mitre Techniques T1016,T1018,T1021.001,T1033,T1059.001,T1069,T1082,T1087.002,T1484,T1555"
+          },
+          {
+            "name": "tactics",
+            "value": "Execution"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1016,T1018,T1021.001,T1033,T1059.001,T1069,T1082,T1087.002,T1484,T1555"
+          }
+        ]
+      }
+    }
+  ]
+}
