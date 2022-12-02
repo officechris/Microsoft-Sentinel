@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_User_account_created_under_suspicious_circumstances_T1098_T1136')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - User account created under suspicious circumstances",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"User account created under suspicious circumstances\"\n| where MitreTechnique == \"T1098;T1136\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - User account created under suspicious circumstances - Mitre Techniques T1098,T1136"
+          },
+          {
+            "name": "tactics",
+            "value": "Persistence"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1098,T1136"
+          }
+        ]
+      }
+    }
+  ]
+}
