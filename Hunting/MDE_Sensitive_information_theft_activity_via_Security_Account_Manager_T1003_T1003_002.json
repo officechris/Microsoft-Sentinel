@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Sensitive_information_theft_activity_via_Security_Account_Manager_T1003_T1003_002')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Sensitive information theft activity via Security Account Manager",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Sensitive information theft activity via Security Account Manager\"\n| where MitreTechnique == \"T1003;T1003.002\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Sensitive information theft activity via Security Account Manager - Mitre Techniques T1003,T1003.002"
+          },
+          {
+            "name": "tactics",
+            "value": "CredentialAccess"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1003,T1003.002"
+          }
+        ]
+      }
+    }
+  ]
+}
