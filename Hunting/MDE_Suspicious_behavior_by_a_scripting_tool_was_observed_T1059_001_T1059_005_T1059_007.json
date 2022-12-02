@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Suspicious_behavior_by_a_scripting_tool_was_observed_T1059_001_T1059_005_T1059_007')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Suspicious behavior by a scripting tool was observed",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Suspicious behavior by a scripting tool was observed\"\n| where MitreTechnique == \"T1059.001;T1059.005;T1059.007\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Suspicious behavior by a scripting tool was observed - Mitre Techniques T1059.001,T1059.005,T1059.007"
+          },
+          {
+            "name": "tactics",
+            "value": "Execution"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1059.001,T1059.005,T1059.007"
+          }
+        ]
+      }
+    }
+  ]
+}
