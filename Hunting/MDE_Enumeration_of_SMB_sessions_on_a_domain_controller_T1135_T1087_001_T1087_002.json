@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Enumeration_of_SMB_sessions_on_a_domain_controller_T1135_T1087_001_T1087_002')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Enumeration of SMB sessions on a domain controller",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Enumeration of SMB sessions on a domain controller\"\n| where MitreTechnique == \"T1135;T1087.001;T1087.002\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Enumeration of SMB sessions on a domain controller - Mitre Techniques T1135,T1087.001,T1087.002"
+          },
+          {
+            "name": "tactics",
+            "value": "Discovery"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1135,T1087.001,T1087.002"
+          }
+        ]
+      }
+    }
+  ]
+}
