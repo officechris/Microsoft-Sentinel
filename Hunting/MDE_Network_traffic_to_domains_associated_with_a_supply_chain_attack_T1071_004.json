@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Network_traffic_to_domains_associated_with_a_supply_chain_attack_T1071_004')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Network traffic to domains associated with a supply chain attack",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Network traffic to domains associated with a supply chain attack\"\n| where MitreTechnique == \"T1071.004\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Network traffic to domains associated with a supply chain attack - Mitre Techniques T1071.004"
+          },
+          {
+            "name": "tactics",
+            "value": "CommandAndControl"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1071.004"
+          }
+        ]
+      }
+    }
+  ]
+}
