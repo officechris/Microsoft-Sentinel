@@ -15,7 +15,7 @@
             "apiVersion": "2021-09-01-preview",
             "properties": {
                 "displayName": "MFA Registration Added",
-                "description": "User has added a new MFA Registration Detail",
+                "description": "User has added new MFA Registration Details",
                 "severity": "Informational",
                 "enabled": true,
                 "query": "AuditLogs \r\n| extend u=parse_json(InitiatedBy)\r\n| extend upn=u.user.userPrincipalName\r\n| extend UserId=tostring(u.user.id)\r\n| extend TimeRegistered = TimeGenerated\r\n| join kind=inner\r\n(SigninLogs\r\n| extend UserId = tostring(UserId)\r\n| extend l=parse_json(LocationDetails)\r\n| extend city=l.city\r\n| extend state=l.state\r\n| extend country=l.countryOrRegion\r\n| where AppDisplayName == \"My Access\") on UserId \r\n| where Category == \"UserManagement\" and OperationName == \"User registered security info\" \r\n| project TimeGenerated, upn, UserId, IPAddress, city, state, country, OperationName, ResultDescription",
