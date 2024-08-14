@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/MDE_Bitsadmin_abuse_by_domain_user_account_T1197')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "eTag": "*",
+        "displayName": "MDE Alert - Bitsadmin abuse by domain user account",
+        "category": "Hunting Queries",
+        "query": "SecurityAlert\n| where ProductName == \"Microsoft Defender Advanced Threat Protection\"\n| extend ep=parse_json(ExtendedProperties)\n| extend MitreTechnique = ep.[\"MitreTechniques\"]\n| where AlertName == \"Bitsadmin abuse by domain user account\"\n| where MitreTechnique == \"T1197\"",
+        "version": 1,
+        "tags": [
+          {
+            "name": "description",
+            "value": "Microsoft Defender for Endpoint Alert - Bitsadmin abuse by domain user account - Mitre Techniques T1197"
+          },
+          {
+            "name": "tactics",
+            "value": "Persistence, DefenseEvasion"
+          },
+		  {
+            "name": "techniques",
+            "value": "T1197"
+          }
+        ]
+      }
+    }
+  ]
+}
